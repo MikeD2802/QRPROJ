@@ -1,0 +1,169 @@
+P1 final verification on Linux; Windows executables compiled, not executed.
+UTC: 2026-10-01T19:30:19.294327+00:00
+
+$ /tmp/qrproj-dotnet/dotnet restore tests/QrGuard.Contracts/QrGuard.Contracts.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet build tests/QrGuard.Contracts/QrGuard.Contracts.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Decoder -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Decoder/bin/Release/net10.0/QrGuard.Decoder.dll
+  QrGuard.Contracts -> /workspace/scratch/4fb2f5440712/QRPROJ/tests/QrGuard.Contracts/bin/Release/net10.0/QrGuard.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:04.91
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet run --project tests/QrGuard.Contracts -c Release --no-build --no-restore
+PASS native QR decoder preserves original UTF-8 payload
+PASS moving QR retains track identity and revises geometry
+PASS stationary payload replacement invalidates previous revision
+PASS fresh absence retires mask immediately
+PASS occluded and removed synthetic scenes contain no decodable QR
+PASS out-of-order result cannot resurrect a retired mask
+PASS old session, monitor and display generation are rejected
+PASS late results and future timestamps are rejected
+PASS capture stall bounds mask lifetime
+PASS invalid geometry, overflow and oversized payloads are rejected
+PASS observation count is bounded
+PASS same bytes in multiple QRs produce separate tracks
+PASS reliable undecodable geometry is masked with disabled payload state
+PASS margin covers QR and clips to physical frame bounds
+PASS default, collapsed and crossed decoder corners never create a mask
+PASS rotated valid corners yield bounded physical geometry
+PASS latest-slot replacement, closing and consumption dispose exactly once
+PASS frame pixels and observation bytes are zeroed on release
+PASS frame allocation arithmetic and envelope are bounded
+PASS synthetic sensitive QR is decoded without text logging
+PASS full-frame discovery finds QR crossing an arbitrary tile boundary
+PASS native decoding feeds stationary replacement and disappearance through tracking
+PASS QR-only reader ignores a valid non-QR barcode
+PASS: 23 P0 portable contracts. Windows compositor, physical phone and sharing were not tested.
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet restore tests/QrGuard.P1.Contracts/QrGuard.P1.Contracts.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet build tests/QrGuard.P1.Contracts/QrGuard.P1.Contracts.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.P1.Contracts -> /workspace/scratch/4fb2f5440712/QRPROJ/tests/QrGuard.P1.Contracts/bin/Release/net10.0/QrGuard.P1.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.25
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet run --project tests/QrGuard.P1.Contracts -c Release --no-build --no-restore
+PASS architecture fixture 01
+PASS architecture fixture 02
+PASS architecture fixture 03
+PASS architecture fixture 04
+PASS architecture fixture 05
+PASS architecture fixture 06
+PASS architecture fixture 07
+PASS architecture fixture 08
+PASS architecture fixture 09
+PASS architecture fixture 10
+PASS all six mask labels are truthful
+PASS deny precedes allow in either file order
+PASS expiry ignores rules at the exact UTC boundary
+PASS expired deny no longer overrides an active allow
+PASS exact URL does not normalize complete original text
+PASS exact host respects label boundaries and effective scheme/port
+PASS IDNA host matches canonical ASCII only and displays it prominently
+PASS payload hash uses original bytes, never a canonical URI
+PASS UTF-8 is strict, including overlong/truncated/surrogate encodings
+PASS unpaired UTF-16 in a policy URL is rejected without throwing
+PASS malformed and ambiguous HTTP URLs never launch
+PASS standard IPv4 and IPv6 URLs remain launchable
+PASS non-URL and unsupported schemes remain unsupported
+PASS sensitive URI and structured payload types are classified first
+PASS schema enforces required root fields and rejects additional properties
+PASS schema rejects wrong root types, enums, bounds and duplicate properties
+PASS rule schema validates every required field and additional properties
+PASS integral JSON numbers obey schema integer semantics
+PASS rule IDs must be unique
+PASS expiry must be a real UTC date-time ending in Z
+PASS match definitions enforce exactly one supported match shape
+PASS rule URLs also require semantic validation
+PASS file bytes and total rule count are bounded before acceptance
+PASS invalid replacement retains the last validated snapshot
+PASS no valid policy uses the built-in Unverified warn baseline
+PASS bounded stream loader rejects oversize even without a reported length
+PASS details and policy evaluation have no automatic browser or clipboard effects
+PASS explicit approved Open and Copy receive the original validated HTTP target
+PASS Unverified Open requires warning confirmation; Copy requires its own action
+PASS warning confirmation must follow an issued warning and can be used only once
+PASS unknown_action block prevents navigation even with confirmation
+PASS blocked actions are refused in the controller, not just disabled buttons
+PASS hash allows never enable sensitive, unsupported or undecodable actions
+PASS invalid UTF-8 remains non-launchable despite a matching allow hash
+PASS default details redact query/fragment values and neutralize bidi
+PASS same-location replacement invalidates pending warning, Open and Copy
+PASS geometry changes invalidate pending actions even when payload is identical
+PASS retirement and stale callbacks cannot launch an earlier destination
+PASS session, monitor, generation, track and revision tuples are all rechecked
+PASS actions require fresh observations even before masks reach their retirement limit
+PASS policy edits invalidate pending actions even when the numeric revision is reused
+PASS identical reload retains snapshot identity; invalid edit does not replace it
+PASS action-time expiry removes approvals and requires a warning
+PASS expired approval under unknown_action block cannot be opened
+PASS stationary identical observations keep actions current but never bypass warnings
+PASS mask labels reevaluate rule expiry and UTC clock rollback
+PASS stop/clear and disposal invalidate every pending action
+PASS owned original bytes survive observation release and are cleared on every lifecycle boundary
+PASS latest-result slot clears discarded original payload buffers
+PASS track payload and observation limits bound live owned memory
+PASS byte-identical full frames coalesce; periodic full discovery remains required
+PASS coalesced batch ownership is independent and cached payloads clear on replacement/disposal
+PASS coalescing never reuses geometry across session/display identities or dimensions
+PASS stop clears cached bytes promptly while decoder work finishes and discards the late payload
+PASS latest-result bursts retain one pending item and clear all replacements
+PASS diagnostics have a fixed redacted schema and a bounded event queue
+PASS adapter exceptions remain redacted and never retry automatically
+PASS: 67 P1 portable contracts. Windows UI/input, compositor, egress and workstation resources were not tested.
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet restore src/QrGuard.Windows/QrGuard.Windows.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet build src/QrGuard.Windows/QrGuard.Windows.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Decoder -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Decoder/bin/Release/net10.0/QrGuard.Decoder.dll
+  QrGuard.Windows -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Windows/bin/Release/net10.0-windows10.0.19041.0/win-x64/QrGuard.Windows.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.53
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet restore tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+exit_code: 0
+
+$ /tmp/qrproj-dotnet/dotnet build tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/4fb2f5440712/QRPROJ/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Windows.Contracts -> /workspace/scratch/4fb2f5440712/QRPROJ/tests/QrGuard.Windows.Contracts/bin/Release/net10.0-windows/QrGuard.Windows.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.20
+exit_code: 0
+
+PASS Draft 2020-12 schema self-check/example format validation; 14 JSON/YAML files parsed. P1-only authorization, D07, G01, six pending P0 criteria and pending P2-P4 asserted.
+PASS git diff --check and source manifest integrity checks.

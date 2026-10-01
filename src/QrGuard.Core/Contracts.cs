@@ -111,4 +111,17 @@ public interface IMaskRenderer : IDisposable
 }
 
 public readonly record struct TrackSnapshot(
-    long TrackId, int GeometryRevision, int PayloadRevision, PixelRect Bounds, bool Decoded);
+    long TrackId, int GeometryRevision, int PayloadRevision, PixelRect Bounds, bool Decoded,
+    DecisionState State = DecisionState.Unverified);
+
+public readonly record struct TrackIdentity(
+    Guid SessionId, long MonitorId, int DisplayGeneration, long TrackId, int GeometryRevision, int PayloadRevision);
+public readonly record struct ActionTicket(TrackIdentity Track, Guid PolicyToken);
+
+public interface ITrackStore : IDisposable
+{
+    IReadOnlyList<TrackSnapshot> Snapshot { get; }
+    bool Apply(FrameIdentity identity, DecodeBatch batch, int width, int height, long nowTicks, long ticksPerSecond);
+    bool Expire(long nowTicks, long ticksPerSecond);
+    void Clear();
+}

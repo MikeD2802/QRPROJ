@@ -2,7 +2,15 @@ schema_version: 1
 project: qr-guard
 document_date: 2026-10-01
 mode: phased_implementation
-implementation_authorization: P0_only_stop_for_review
+implementation_authorization: P1_only_stop_for_review
+development_dependency_exceptions:
+  - id: D07
+    date: 2026-10-01
+    source: Explicit user P1 implementation request
+    phase: P1
+    dependency: P0
+    choice: Permit P1 development and portable verification before P0 workstation and physical-phone acceptance.
+    limits: Development only; P0 remains blocked by G01; missing evidence is not a pass; P2-P4 remain pending.
 
 defaults:
   platform: windows_11_x64
@@ -63,8 +71,9 @@ phases:
 
   - id: P1
     name: offline_mvp
-    status: pending
+    status: blocked # Implementation ready for review; actual UI/egress/resource acceptance pending.
     depends_on: [P0]
+    development_dependency_exception: D07
     scope:
       - typed_payload_validation_and_local_policy
       - track_and_policy_revision_bound_actions

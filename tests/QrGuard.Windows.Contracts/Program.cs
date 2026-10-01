@@ -17,7 +17,8 @@ internal static class Program
         {
             MonitorTarget monitor = MonitorTarget.Enumerate()[0];
             int width = Math.Min(monitor.Width, Limits.MaxWidth), height = Math.Min(monitor.Height, Limits.MaxHeight);
-            using var renderer = new MaskRenderer(monitor);
+            int detailsRequests = 0; long requestedTrack = 0;
+            using var renderer = new MaskRenderer(monitor, id => { detailsRequests++; requestedTrack = id; });
             TrackSnapshot track = new(1, 1, 1, new(40, 40, 80, 80), true);
             renderer.Render([track], width, height);
             nint hwnd = OwnMaskWindows().Single();
@@ -25,6 +26,24 @@ internal static class Program
             VerifyBounds(hwnd, track.Bounds.WithMargin(width, height), monitor);
             Assert(IsWindowVisible(hwnd), "mask_not_visible");
             Console.WriteLine("PASS: visible mask has layered/no-activate/tool/topmost styles, alpha 255, no color key, and affinity 0x11.");
+
+            foreach (DecisionState state in Enum.GetValues<DecisionState>())
+            {
+                renderer.Render([track with { State = state, Decoded = state != DecisionState.UnableToDecode }], width, height);
+                var title = new StringBuilder(128); GetWindowText(hwnd, title, title.Capacity);
+                Assert(title.ToString().Contains(new PolicyDecision(state).Label, StringComparison.Ordinal), "mask_accessible_label");
+                VerifyConfiguration(hwnd);
+            }
+            Assert(detailsRequests == 0, "render_requested_details");
+            Console.WriteLine("PASS: six policy states expose fixed window labels and retain opacity/affinity; render never requests details.");
+
+            Assert(SendMessage(hwnd, 0x0021, 0, 0).ToInt64() == 3, "mouseactivate_should_not_activate");
+            SendMessage(hwnd, 0x0202, 0, (nint)((10 << 16) | 10));
+            Assert(detailsRequests == 0, "button_up_without_down_requested_details");
+            SendMessage(hwnd, 0x0201, 0, (nint)((10 << 16) | 10));
+            SendMessage(hwnd, 0x0202, 0, (nint)((10 << 16) | 10));
+            Assert(detailsRequests == 1 && requestedTrack == track.TrackId, "deliberate_details_callback");
+            Console.WriteLine("PASS: synthetic Win32 mouse messages preserve no-activate handling and request only current track details after down/up.");
 
             track = track with { GeometryRevision = 2, Bounds = new(100, 60, 100, 90) };
             renderer.Render([track], width, height);
@@ -42,7 +61,7 @@ internal static class Program
             renderer.Dispose();
             Assert(!IsWindow(hwnd) && OwnMaskWindows().Count == 0, "disposed_mask_survived");
             Console.WriteLine("PASS: disposal destroys the recreated mask window.");
-            Console.WriteLine("PASS: 4 P0 Windows mask API contracts. Capture, physical opacity/phone resistance, real input, sharing and performance were not tested.");
+            Console.WriteLine("PASS: 4 P0 and 2 P1 Windows mask API contracts. Synthetic messages are not real UI/input evidence. Capture, phone resistance, real input, sharing and performance were not tested.");
             return 0;
         }
         catch (Win32Exception error)
@@ -96,6 +115,8 @@ internal static class Program
     [DllImport("kernel32.dll")] private static extern uint GetCurrentThreadId();
     [DllImport("user32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool EnumThreadWindows(uint thread, WindowCallback callback, nint data);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int GetClassName(nint hwnd, StringBuilder name, int count);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int GetWindowText(nint hwnd, StringBuilder text, int count);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern nint SendMessage(nint hwnd, uint message, nint wparam, nint lparam);
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")] private static extern nint GetWindowLongPtr(nint hwnd, int index);
     [DllImport("user32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetLayeredWindowAttributes(nint hwnd, out uint colorKey, out byte alpha, out uint flags);
     [DllImport("user32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetWindowRect(nint hwnd, out Native.Rect rect);
