@@ -1,0 +1,24 @@
+PASS native QR decoder preserves original UTF-8 payload
+PASS moving QR retains track identity and revises geometry
+PASS stationary payload replacement invalidates previous revision
+PASS fresh absence retires mask immediately
+PASS occluded and removed synthetic scenes contain no decodable QR
+PASS out-of-order result cannot resurrect a retired mask
+PASS old session, monitor and display generation are rejected
+PASS late results and future timestamps are rejected
+PASS capture stall bounds mask lifetime
+PASS invalid geometry, overflow and oversized payloads are rejected
+PASS observation count is bounded
+PASS same bytes in multiple QRs produce separate tracks
+PASS reliable undecodable geometry is masked with disabled payload state
+PASS margin covers QR and clips to physical frame bounds
+PASS default, collapsed and crossed decoder corners never create a mask
+PASS rotated valid corners yield bounded physical geometry
+PASS latest-slot replacement, closing and consumption dispose exactly once
+PASS frame pixels and observation bytes are zeroed on release
+PASS frame allocation arithmetic and envelope are bounded
+PASS synthetic sensitive QR is decoded without text logging
+PASS full-frame discovery finds QR crossing an arbitrary tile boundary
+PASS native decoding feeds stationary replacement and disappearance through tracking
+PASS QR-only reader ignores a valid non-QR barcode
+PASS: 23 P0 portable contracts. Windows compositor, physical phone and sharing were not tested.

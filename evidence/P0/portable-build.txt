@@ -1,0 +1,9 @@
+  QrGuard.Core -> <repo>/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Decoder -> <repo>/src/QrGuard.Decoder/bin/Release/net10.0/QrGuard.Decoder.dll
+  QrGuard.Contracts -> <repo>/tests/QrGuard.Contracts/bin/Release/net10.0/QrGuard.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.76

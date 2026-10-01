@@ -1,8 +1,8 @@
 schema_version: 1
 project: qr-guard
 document_date: 2026-10-01
-mode: architecture_only
-implementation_authorization: not_started
+mode: phased_implementation
+implementation_authorization: P0_only_stop_for_review
 
 defaults:
   platform: windows_11_x64
@@ -35,7 +35,7 @@ invariants:
 phases:
   - id: P0
     name: windows_feasibility
-    status: pending
+    status: blocked # Code ready for review; G01 desktop/phone evidence remains absent.
     depends_on: []
     scope:
       - minimal_capture_decode_opaque_mask_vertical_slice

@@ -1,0 +1,28 @@
+name: P0 build and portable contracts
+on:
+  push:
+    branches: [main, 'codex/p0-*']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - run: dotnet restore tests/QrGuard.Contracts/QrGuard.Contracts.csproj --locked-mode
+      - run: dotnet build tests/QrGuard.Contracts/QrGuard.Contracts.csproj -c Release --no-restore
+      - run: dotnet run --project tests/QrGuard.Contracts -c Release --no-build --no-restore
+      - run: dotnet restore src/QrGuard.Windows/QrGuard.Windows.csproj --locked-mode
+      - run: dotnet build src/QrGuard.Windows/QrGuard.Windows.csproj -c Release --no-restore
+      # A successful hosted runner build is not Windows desktop/phone acceptance.

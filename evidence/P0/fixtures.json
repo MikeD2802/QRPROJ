@@ -1,0 +1,67 @@
+{
+  "seed": "P0-2026-10-01",
+  "source": "src/QrGuard.Decoder/SyntheticFixtures.cs",
+  "generator": "ZXingCpp 0.5.3 / zxing-cpp 3.1.1",
+  "format": "QRCode",
+  "ec_level": "H",
+  "pixels_per_module": 6,
+  "quiet_zone": true,
+  "fixture_display_size_dips": [
+    270,
+    270
+  ],
+  "acceptance_dpi_percent": 100,
+  "portable_frame_pixels": [
+    640,
+    480
+  ],
+  "windows_acceptance_frame_pixels": [
+    1920,
+    1080
+  ],
+  "p0_policy_behavior": "No policy evaluator or launch action; every decoded QR is Unverified P0.",
+  "fixtures": [
+    {
+      "id": "A",
+      "payload_utf8": "https://benefits.corp.example/enroll",
+      "payload_hex": "68747470733a2f2f62656e65666974732e636f72702e6578616d706c652f656e726f6c6c",
+      "expected_policy_in_P1": "approved_by_example_policy_in_P1",
+      "scenarios": [
+        "static",
+        "same_location_payload_change",
+        "motion",
+        "removal",
+        "occlusion",
+        "phone_positive_control"
+      ]
+    },
+    {
+      "id": "B",
+      "payload_utf8": "https://help.corp.example/deny-test",
+      "payload_hex": "68747470733a2f2f68656c702e636f72702e6578616d706c652f64656e792d74657374",
+      "expected_policy_in_P1": "deny_overrides_host_allow_in_P1",
+      "scenarios": [
+        "static",
+        "same_location_payload_change",
+        "motion",
+        "removal",
+        "occlusion",
+        "phone_positive_control"
+      ]
+    },
+    {
+      "id": "sensitive",
+      "payload_utf8": "otpauth://totp/Demo?secret=SYNTHETICONLY",
+      "payload_hex": "6f7470617574683a2f2f746f74702f44656d6f3f7365637265743d53594e5448455449434f4e4c59",
+      "expected_policy_in_P1": "sensitive_no_launch_in_P1",
+      "scenarios": [
+        "static",
+        "same_location_payload_change",
+        "motion",
+        "removal",
+        "occlusion",
+        "phone_positive_control"
+      ]
+    }
+  ]
+}

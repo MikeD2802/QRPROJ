@@ -1,0 +1,67 @@
+schema_version: 1
+project: qr-guard
+phase: P0
+status: blocked
+implementation_status: code_ready_for_review
+authorized_scope: P0_only_stop_for_review
+source_base_commit: 5fdbf2a11c3f1a3e4ddf6de608b2d065b56675d0
+branch: codex/p0-feasibility
+decisions:
+  - id: D01
+    choice: Implement only the first pending phase and stop for user review.
+    source: User request on 2026-10-01
+  - id: D02
+    choice: Local physical-display contract; no screenshot or remote-view protection claim.
+    source: architecture.md section 2 and execution-plan.yaml defaults
+  - id: D03
+    choice: Single-monitor WGC with two pool buffers, QR-only ZXingCpp 0.5.3, native opaque masks.
+    source: Architecture defaults; dependency verification in evidence/P0/dependencies.md
+  - id: D04
+    choice: Full-frame decode at a nominal 5 passes/sec for the feasibility baseline; no capture fallback or periodic unmasking.
+    source: Minimal P0 vertical slice; resource targets remain unmeasured on Windows.
+verification:
+  source_review: performed
+  windows_target_compilation: passed_on_linux
+  portable_native_qr_contracts: passed
+  windows_executable_run: not_performed
+  physical_phone: not_performed
+  desktop_sharing: not_performed
+  source_window_sharing: not_performed
+  windows_resource_baseline: not_performed
+criteria:
+  - criterion: physical_phone_cannot_decode_covered_static_fixture
+    status: pending
+    evidence_path: evidence/P0/physical-phone-results.md
+    environment: real_windows_and_phone_required
+  - criterion: agent_sees_underlying_qr_without_hiding_mask
+    status: pending
+    evidence_path: evidence/P0/capture-overlay-results.md
+    environment: real_windows_required
+  - criterion: mask_tracks_and_retires_on_fresh_observations
+    status: pending
+    evidence_path: evidence/P0/capture-overlay-results.md
+    environment: portable_contracts_passed_actual_windows_compositor_unverified
+  - criterion: no_focus_theft_or_unrelated_click_interception
+    status: pending
+    evidence_path: evidence/P0/capture-overlay-results.md
+    environment: real_windows_required
+  - criterion: desktop_and_window_share_modes_are_separately_documented
+    status: pending
+    evidence_path: evidence/P0/compatibility-and-baseline.md
+    environment: separate_real_sharing_experiments_required
+  - criterion: cpu_memory_latency_baseline_is_measured_on_windows
+    status: pending
+    evidence_path: evidence/P0/compatibility-and-baseline.md
+    environment: real_windows_required
+blockers:
+  - gate: G01
+    evidence: evidence/P0/environment.md
+    missing: No real Windows workstation or physical phone is attached to this Linux session.
+    impact: P0 cannot pass; P1 and dependent phases cannot start.
+    recommendation: Review the draft and run the controlled Windows acceptance procedure, then record the results against the exact tested commit.
+capture_architecture_attempts:
+  candidate: windows_graphics_capture_monitor_interop_with_persistent_affinity_masks
+  real_windows_attempts: 0
+  failed_materially_different_approaches: 0
+review_required: true
+next_action: User review of P0 code and real Windows/phone evidence collection; remain in P0 until its gate passes.
