@@ -1,7 +1,7 @@
-name: P0 build and portable contracts
+name: P0 regressions and P1 offline contracts
 on:
   push:
-    branches: [main, 'codex/p0-*']
+    branches: [main, 'codex/p0-*', 'codex/p1-*']
   pull_request:
 permissions:
   contents: read
@@ -23,6 +23,9 @@ jobs:
       - run: dotnet restore tests/QrGuard.Contracts/QrGuard.Contracts.csproj --locked-mode
       - run: dotnet build tests/QrGuard.Contracts/QrGuard.Contracts.csproj -c Release --no-restore
       - run: dotnet run --project tests/QrGuard.Contracts -c Release --no-build --no-restore
+      - run: dotnet restore tests/QrGuard.P1.Contracts/QrGuard.P1.Contracts.csproj --locked-mode
+      - run: dotnet build tests/QrGuard.P1.Contracts/QrGuard.P1.Contracts.csproj -c Release --no-restore
+      - run: dotnet run --project tests/QrGuard.P1.Contracts -c Release --no-build --no-restore
       - run: dotnet restore src/QrGuard.Windows/QrGuard.Windows.csproj --locked-mode
       - run: dotnet build src/QrGuard.Windows/QrGuard.Windows.csproj -c Release --no-restore
       - run: dotnet restore tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj --locked-mode
@@ -31,7 +34,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          foreach ($file in @('scripts/run-p0.ps1', 'scripts/collect-p0-environment.ps1')) {
+          foreach ($file in @('scripts/run-p0.ps1', 'scripts/run-p1.ps1', 'scripts/collect-p0-environment.ps1')) {
             $tokens = $null
             $parseErrors = $null
             [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD $file), [ref]$tokens, [ref]$parseErrors) | Out-Null

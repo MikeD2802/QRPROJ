@@ -1,6 +1,7 @@
 param(
     [string]$OutputPath = (Join-Path $PSScriptRoot '../lab-local/environment.json'),
-    [ValidatePattern('^$|^[a-fA-F0-9]{40}$')][string]$ExpectedCommit = ''
+    [ValidatePattern('^$|^[a-fA-F0-9]{40}$')][string]$ExpectedCommit = '',
+    [ValidateSet('P0', 'P1')][string]$Phase = 'P0'
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
@@ -11,7 +12,8 @@ $changes = git -C $projectRoot status --porcelain --untracked-files=normal
 if ($LASTEXITCODE -ne 0 -or $changes) { throw 'Use a clean checkout for exact-commit acceptance evidence.' }
 $binaryPaths = @(
     'src/QrGuard.Windows/bin/Release/net10.0-windows10.0.19041.0/win-x64/QrGuard.Windows.dll',
-    'tests/QrGuard.Windows.Contracts/bin/Release/net10.0-windows/QrGuard.Windows.Contracts.dll'
+    'tests/QrGuard.Windows.Contracts/bin/Release/net10.0-windows/QrGuard.Windows.Contracts.dll',
+    'tests/QrGuard.P1.Contracts/bin/Release/net10.0/QrGuard.P1.Contracts.dll'
 )
 $binaryHashes = foreach ($relativePath in $binaryPaths) {
     $binaryPath = Join-Path $projectRoot $relativePath
@@ -26,7 +28,7 @@ $cpu = Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, Numb
 $gpu = Get-CimInstance Win32_VideoController | Select-Object Name, DriverVersion
 $report = [ordered]@{
     schema_version = 2
-    phase = 'P0'
+    phase = $Phase
     recorded_at_utc = [DateTime]::UtcNow.ToString('o')
     source_commit = $sourceCommit
     source_tree_clean = $true

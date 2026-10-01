@@ -24,6 +24,9 @@ internal sealed class FixtureWindow : Window
         AddButton(controls, "Payload A", () => ShowPayload(SyntheticFixtures.PayloadA));
         AddButton(controls, "Payload B (same location)", () => ShowPayload(SyntheticFixtures.PayloadB));
         AddButton(controls, "Sensitive demo", () => ShowPayload(SyntheticFixtures.Sensitive));
+        AddButton(controls, "Unverified demo", () => ShowPayload("https://benefits.corp.example/enroll?token=demo"));
+        AddButton(controls, "Unsupported demo", () => ShowPayload("javascript:alert(1)"));
+        AddButton(controls, "IDNA demo", () => ShowPayload("https://bücher.example/שלום?token=SYNTHETICONLY#demo"));
         AddButton(controls, "Move / stop", () => { if (_motion.IsEnabled) _motion.Stop(); else _motion.Start(); });
         AddButton(controls, "Remove QR", () => { _motion.Stop(); _qr.Visibility = Visibility.Hidden; });
         layout.Children.Add(controls);

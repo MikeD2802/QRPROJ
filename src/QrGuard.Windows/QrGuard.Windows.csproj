@@ -12,6 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="../../policy.example.json" Link="policy.example.json" CopyToOutputDirectory="PreserveNewest" />
     <ProjectReference Include="../QrGuard.Core/QrGuard.Core.csproj" />
     <ProjectReference Include="../QrGuard.Decoder/QrGuard.Decoder.csproj" />
     <PackageReference Include="Vortice.Direct3D11" Version="[3.8.3]" />

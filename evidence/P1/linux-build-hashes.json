@@ -1,0 +1,30 @@
+{
+  "evidence_type": "linux_compilation_only",
+  "sdk": "10.0.401",
+  "binaries": [
+    {
+      "path": "src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll",
+      "sha256": "f2aec934e34404a02a9a5cd99850008d1a4672a6b56705826161b5924bead460"
+    },
+    {
+      "path": "src/QrGuard.Decoder/bin/Release/net10.0/QrGuard.Decoder.dll",
+      "sha256": "014e811a104af1c21f17d2e4a86edc9b7f289b9c8ca2876675548e9a2d4c402a"
+    },
+    {
+      "path": "src/QrGuard.Windows/bin/Release/net10.0-windows10.0.19041.0/win-x64/QrGuard.Windows.dll",
+      "sha256": "3d1d22d2d9335c52086928375f8d320b00e03a992bdae65e60d5fbc9b873236d"
+    },
+    {
+      "path": "tests/QrGuard.Contracts/bin/Release/net10.0/QrGuard.Contracts.dll",
+      "sha256": "76da1a6b945fea49ecf61fb5d42c40c914732cc0227378ff4b6b1351da3f9b64"
+    },
+    {
+      "path": "tests/QrGuard.P1.Contracts/bin/Release/net10.0/QrGuard.P1.Contracts.dll",
+      "sha256": "d76d2b2554052bde1d759adf9fac6b016d7a04549b79933b38fdd0f0069872ed"
+    },
+    {
+      "path": "tests/QrGuard.Windows.Contracts/bin/Release/net10.0-windows/QrGuard.Windows.Contracts.dll",
+      "sha256": "2ca7d4f59adca66f935da0eeaa8e714513d0a30ea6c895dba31bd98a062e1ab8"
+    }
+  ]
+}
