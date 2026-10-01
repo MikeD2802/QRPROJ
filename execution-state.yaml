@@ -49,14 +49,19 @@ decisions:
     source: Architecture frame-change coalescing and periodic full discovery; P1-only refinement of D04; no measured resource deviation accepted.
 verification:
   source_review: performed
-  windows_target_compilation: passed_on_linux
+  windows_target_compilation: passed_on_linux_and_hosted_windows
   portable_native_qr_contracts: passed
   portable_native_qr_contract_count: 23
-  portable_p1_contracts: passed_on_linux
+  portable_p1_contracts: passed_on_linux_and_hosted_windows
   portable_p1_contract_count: 67
   transcript: evidence/P1/verification.txt
   source_hashes: evidence/P1/source-hashes.sha256
-  windows_mask_api_contracts: compiled_on_linux_execution_in_pr_ci_to_be_recorded
+  windows_mask_api_contracts: passed_on_hosted_windows_server_2025
+  windows_mask_api_contract_count: 6
+  hosted_ci_evidence: evidence/P1/ci-results.md
+  hosted_ci_implementation_head: 2800926eb9734245990d7ef412b9fe86c1f0c5c8
+  hosted_ci_checkout: 29136899d5f46592e9bd02564319fe7a3dabd45b
+  draft_pr: https://github.com/MikeD2802/QRPROJ/pull/2
   windows_executable_run: not_performed
   physical_phone: not_performed
   desktop_sharing: not_performed

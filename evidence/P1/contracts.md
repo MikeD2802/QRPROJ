@@ -15,7 +15,7 @@ Ubuntu 24.04 x64; pinned .NET SDK 10.0.401 / runtime 10.0.12. All four projects 
 | P0 native QR/lifecycle regressions | `verification.txt` | 23 contracts passed on Linux |
 | P1 payload/policy/actions/bounds | `verification.txt` | 67 contracts passed on Linux |
 | Windows app and native API executable | `verification.txt` | Compiled; zero warnings/errors; not executed on Linux |
-| Hosted Windows API/portable execution | Draft PR CI | Separate API evidence, recorded against CI checkout SHA |
+| Hosted Windows API/portable execution | `ci-results.md` / PR CI | Passed: 23 P0 + 67 P1 portable; six native mask API checks; PowerShell syntax; exact CI checkout recorded |
 | Real Windows capture/WPF/input | `windows-acceptance.md` | Pending |
 | Runtime egress and workstation resources | `egress-and-resource-report.md` | Pending |
 

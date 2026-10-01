@@ -2,6 +2,8 @@
 
 No supported Windows 11 workstation or phone is attached. Every row below is **pending** with no inferred pass or trial count. Hosted native HWND/synthetic-message CI is separate API evidence. Continuous physical masking and under-mask WGC remain unverified.
 
+Hosted API evidence: `ci-results.md` records Windows Server 2025 execution of six native HWND/synthetic-message checks and both portable harnesses. This does not change any workstation or phone status below.
+
 | Scenario | Expected behavior | Status / evidence |
 |---|---|---|
 | P0 phone control/covered QR | Control decodes; continuous mask resists defined phone trials | Pending — `evidence/P0/physical-phone-results.md` |
