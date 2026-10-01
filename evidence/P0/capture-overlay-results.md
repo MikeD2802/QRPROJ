@@ -4,6 +4,8 @@
 
 Use one Windows 11 x64 landscape display at 1920×1080 / 100% DPI. Launch the lab manually as a standard user. Do not change EDR, DLP, capture protections, meeting-tool settings, or organizational policy to make a test pass.
 
+Use a clean checkout and `scripts/run-p0.ps1 -ExpectedCommit '<full reviewed P0 commit SHA>'`. Before launching the capture lab, its four Windows API checks must pass for layered alpha 255, exclusion-affinity readback, movement and cleanup. These are API checks, not phone or under-mask-capture evidence. The run's `environment.json` records the exact source commit and DLL hashes; record its run directory with every acceptance result.
+
 | Scenario | Procedure and pass evidence | Actual result |
 |---|---|---|
 | Uncovered positive control | Open synthetic Payload A. Phone must decode it before capture starts. Clear any cached phone scan popup. | Pending |

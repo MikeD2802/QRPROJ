@@ -35,15 +35,23 @@ internal sealed class MaskRenderer(MonitorTarget monitor) : IMaskRenderer
             int x = checked(monitor.Bounds.Left + rect.X), y = checked(monitor.Bounds.Top + rect.Y);
             if (!_windows.TryGetValue(track.TrackId, out nint hwnd))
             {
-                // WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST, WS_POPUP. No layered transparency.
-                hwnd = Native.CreateWindowEx(0x08000088, ClassName, "QR masked · P0", 0x80000000,
+                // GetWindowDisplayAffinity requires WS_EX_LAYERED. Layering does not require translucency.
+                // Retain WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST and WS_POPUP.
+                hwnd = Native.CreateWindowEx(0x08000088 | Native.WsExLayered, ClassName, "QR masked · P0", 0x80000000,
                     x, y, rect.Width, rect.Height, 0, 0, Native.GetModuleHandle(null), 0);
                 if (hwnd == 0) throw new Win32Exception(Marshal.GetLastWin32Error());
-                // Exclude before showing; keep it excluded continuously, never hide it to rescan.
-                if (!Native.SetWindowDisplayAffinity(hwnd, 0x11)
-                    || !Native.GetWindowDisplayAffinity(hwnd, out uint affinity) || affinity != 0x11)
-                { Native.DestroyWindow(hwnd); throw new InvalidOperationException("mask_affinity_unavailable"); }
-                _windows.Add(track.TrackId, hwnd);
+                try
+                {
+                    // Constant alpha 255 is fully opaque; LWA_ALPHA alone enables no color-key holes.
+                    Native.Check(Native.SetLayeredWindowAttributes(hwnd, 0, 255, Native.LwaAlpha));
+                    // Configure and verify before showing. Keep the mask present continuously during capture.
+                    Native.Check(Native.SetWindowDisplayAffinity(hwnd, Native.WdaExcludeFromCapture));
+                    Native.Check(Native.GetWindowDisplayAffinity(hwnd, out uint affinity));
+                    if (affinity != Native.WdaExcludeFromCapture)
+                        throw new InvalidOperationException("mask_affinity_unavailable");
+                    _windows.Add(track.TrackId, hwnd);
+                }
+                catch { Native.DestroyWindow(hwnd); throw; }
             }
             Decoded[hwnd] = track.Decoded;
             Native.Check(Native.SetWindowPos(hwnd, (nint)(-1), x, y, rect.Width, rect.Height, 0x0010 | 0x0040));

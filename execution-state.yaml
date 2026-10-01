@@ -6,6 +6,7 @@ implementation_status: code_ready_for_review
 authorized_scope: P0_only_stop_for_review
 source_base_commit: 5fdbf2a11c3f1a3e4ddf6de608b2d065b56675d0
 branch: codex/p0-feasibility
+reviewed_commit: 5991a32568a8080f357ad3741f43118bc06511e6
 decisions:
   - id: D01
     choice: Implement only the first pending phase and stop for user review.
@@ -19,10 +20,17 @@ decisions:
   - id: D04
     choice: Full-frame decode at a nominal 5 passes/sec for the feasibility baseline; no capture fallback or periodic unmasking.
     source: Minimal P0 vertical slice; resource targets remain unmeasured on Windows.
+  - id: D05
+    choice: Keep P0 in review; resolve the affinity readback concern and collect exact-commit Windows and phone evidence before P1.
+    source: User review of PR 1 at 5991a32 on 2026-10-01
+  - id: D06
+    choice: Use WS_EX_LAYERED with constant alpha 255 and LWA_ALPHA only before setting and reading back exclusion affinity; retain failure cleanup before display.
+    source: Microsoft Win32 API contract; evidence/P0/affinity-review.md. Real workstation behavior remains unverified.
 verification:
   source_review: performed
   windows_target_compilation: passed_on_linux
   portable_native_qr_contracts: passed
+  windows_mask_api_contracts: see_commit_ci_logs_workstation_run_pending
   windows_executable_run: not_performed
   physical_phone: not_performed
   desktop_sharing: not_performed
@@ -64,4 +72,4 @@ capture_architecture_attempts:
   real_windows_attempts: 0
   failed_materially_different_approaches: 0
 review_required: true
-next_action: User review of P0 code and real Windows/phone evidence collection; remain in P0 until its gate passes.
+next_action: Review the P0 affinity fix, then run scripts/run-p0.ps1 with the full reviewed commit SHA and record Windows/phone acceptance; remain in P0 until G01 passes.

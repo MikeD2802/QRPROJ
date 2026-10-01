@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>../../src/QrGuard.Windows/app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/QrGuard.Core/QrGuard.Core.csproj" />
+    <!-- Exercise the production renderer and P/Invokes without starting capture or the WPF lab. -->
+    <Compile Include="../../src/QrGuard.Windows/MaskRenderer.cs" Link="MaskRenderer.cs" />
+    <Compile Include="../../src/QrGuard.Windows/Native.cs" Link="Native.cs" />
+  </ItemGroup>
+</Project>

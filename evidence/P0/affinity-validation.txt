@@ -1,0 +1,81 @@
+P0 affinity patch authoring verification, 2026-10-01
+Environment: Linux-6.18.44-x86_64-with-glibc2.39
+Source: working-tree patch over 5991a32568a8080f357ad3741f43118bc06511e6; hashes below identify tested source files.
+Windows API, capture, input, physical-phone, sharing and performance execution: NOT RUN on this Linux host.
+
+5969665e707ded2e1ca45cb63186a94d22bdd4173e77b9cdb1557a52ab689c3e  src/QrGuard.Windows/MaskRenderer.cs
+2e8a495400a0ab2276bd75a28bac9e05a1df1c0914b6cffdcc1cc41f478e857d  src/QrGuard.Windows/Native.cs
+2c119ac84a34e79c8ecffde4a07a5dc12fbfa73715c344fb227acc305b8b42d1  tests/QrGuard.Windows.Contracts/Program.cs
+5cdb0d613637292b8d68fdbc1f765cd46b49f733fc2cbf867f0e5f9938363693  tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj
+
+$ dotnet restore tests/QrGuard.Contracts/QrGuard.Contracts.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  Restored /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Core/QrGuard.Core.csproj (in 120 ms).
+  2 of 3 projects are up-to-date for restore.
+
+$ dotnet build tests/QrGuard.Contracts/QrGuard.Contracts.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Decoder -> /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Decoder/bin/Release/net10.0/QrGuard.Decoder.dll
+  QrGuard.Contracts -> /workspace/scratch/e7d2442c1b2d/qr-guard/tests/QrGuard.Contracts/bin/Release/net10.0/QrGuard.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.04
+
+$ dotnet run --project tests/QrGuard.Contracts -c Release --no-build --no-restore
+PASS native QR decoder preserves original UTF-8 payload
+PASS moving QR retains track identity and revises geometry
+PASS stationary payload replacement invalidates previous revision
+PASS fresh absence retires mask immediately
+PASS occluded and removed synthetic scenes contain no decodable QR
+PASS out-of-order result cannot resurrect a retired mask
+PASS old session, monitor and display generation are rejected
+PASS late results and future timestamps are rejected
+PASS capture stall bounds mask lifetime
+PASS invalid geometry, overflow and oversized payloads are rejected
+PASS observation count is bounded
+PASS same bytes in multiple QRs produce separate tracks
+PASS reliable undecodable geometry is masked with disabled payload state
+PASS margin covers QR and clips to physical frame bounds
+PASS default, collapsed and crossed decoder corners never create a mask
+PASS rotated valid corners yield bounded physical geometry
+PASS latest-slot replacement, closing and consumption dispose exactly once
+PASS frame pixels and observation bytes are zeroed on release
+PASS frame allocation arithmetic and envelope are bounded
+PASS synthetic sensitive QR is decoded without text logging
+PASS full-frame discovery finds QR crossing an arbitrary tile boundary
+PASS native decoding feeds stationary replacement and disappearance through tracking
+PASS QR-only reader ignores a valid non-QR barcode
+PASS: 23 P0 portable contracts. Windows compositor, physical phone and sharing were not tested.
+
+$ dotnet restore src/QrGuard.Windows/QrGuard.Windows.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+
+$ dotnet build src/QrGuard.Windows/QrGuard.Windows.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Decoder -> /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Decoder/bin/Release/net10.0/QrGuard.Decoder.dll
+  QrGuard.Windows -> /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Windows/bin/Release/net10.0-windows10.0.19041.0/win-x64/QrGuard.Windows.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.27
+
+$ dotnet restore tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj --locked-mode -m:1 -nr:false -p:BuildInParallel=false
+  Determining projects to restore...
+  Restored /workspace/scratch/e7d2442c1b2d/qr-guard/tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj (in 241 ms).
+  1 of 2 projects are up-to-date for restore.
+
+$ dotnet build tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj -c Release --no-restore -m:1 -nr:false -p:BuildInParallel=false
+  QrGuard.Core -> /workspace/scratch/e7d2442c1b2d/qr-guard/src/QrGuard.Core/bin/Release/net10.0/QrGuard.Core.dll
+  QrGuard.Windows.Contracts -> /workspace/scratch/e7d2442c1b2d/qr-guard/tests/QrGuard.Windows.Contracts/bin/Release/net10.0-windows/QrGuard.Windows.Contracts.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.53

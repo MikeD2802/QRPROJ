@@ -9,10 +9,12 @@ P0 contains a Windows feasibility application: Windows Graphics Capture monitor 
 Use a supported Windows 11 x64 workstation, .NET SDK **10.0.401**, and one landscape monitor at **1920×1080 and 100% DPI** for the first acceptance run. The prototype refuses monitors larger than 1920×1080 or in portrait orientation. Other DPI settings, rotation, display changes, remote sessions, and lock/unlock recovery are unverified.
 
 ```powershell
-.\scripts\run-p0.ps1
+.\scripts\run-p0.ps1 -ExpectedCommit '<full reviewed P0 commit SHA>'
 ```
 
-The script restores locked dependencies, builds, runs portable contracts, and opens the lab. Dependency restore needs NuGet access; the running application makes no network requests. If your PowerShell policy prevents a script, run the individual commands below according to your existing policy.
+Use a clean checkout of the reviewed commit. The script verifies that commit, restores locked dependencies, builds, runs portable contracts and the Windows mask API checks, then opens the lab. It records a separate transcript and environment report for each run in `lab-local/<commit>/<UTC-run>/`, including the source SHA and built DLL hashes. API failure stops the run before capture acceptance. Keep measurements and controlled phone evidence with that run and add trial counts/results to the acceptance matrices.
+
+Dependency restore needs NuGet access; the running application makes no network requests. If your PowerShell policy prevents a script, run the individual commands below according to your existing policy, and record the commit/build identity separately.
 
 1. Open the synthetic fixture, position it on the chosen monitor, and first confirm its uncovered QR scans with a phone.
 2. Select that monitor and click **Start selected monitor**.
@@ -31,15 +33,19 @@ dotnet build tests/QrGuard.Contracts/QrGuard.Contracts.csproj -c Release --no-re
 dotnet run --project tests/QrGuard.Contracts -c Release --no-build --no-restore
 dotnet restore src/QrGuard.Windows/QrGuard.Windows.csproj --locked-mode
 dotnet build src/QrGuard.Windows/QrGuard.Windows.csproj -c Release --no-restore
+dotnet restore tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj --locked-mode
+dotnet build tests/QrGuard.Windows.Contracts/QrGuard.Windows.Contracts.csproj -c Release --no-restore
 ```
 
-On this Linux authoring host, MSBuild needs `-m:1 -nr:false -p:BuildInParallel=false` on build/restore commands. The Windows executable can be compiled here, but it must be run on Windows. GitHub Actions checks compilation and synthetic native QR contracts on Linux and Windows; hosted runners do not establish desktop/phone acceptance.
+On Windows, also run `dotnet run --project tests/QrGuard.Windows.Contracts -c Release --no-build --no-restore`. Its four real HWND checks exercise the production renderer's opaque alpha, affinity readback, movement and cleanup. They acquire no screen pixels and perform no input simulation. See `evidence/P0/affinity-review.md` for the source/API concern and evidence limits.
+
+On this Linux authoring host, MSBuild needs `-m:1 -nr:false -p:BuildInParallel=false` on build/restore commands. The Windows executables can be compiled here, but they must be run on Windows. GitHub Actions checks compilation and synthetic native QR contracts on Linux and Windows, and native mask APIs on its Windows runner; hosted results do not establish workstation/phone acceptance.
 
 ## Scope
 
 The lab uses two WGC pool buffers, one reusable GPU staging texture, one active CPU pixel frame, and one replaceable pending decoded result. Every 200 ms it performs full-frame QR discovery, without periodically hiding a mask. There are at most 16 masks, at most 4096 payload bytes per observation, and 2048 retained timing samples. No raw capture pixels are written to disk; managed frame/payload buffers are cleared on release. Native decoder memory is released using its own disposal API; this is not a claim of forensic memory erasure.
 
-Masks use `WDA_EXCLUDEFROMCAPTURE`, verified by API readback before showing, with tool-window, topmost, and no-activate styles. Clicks are consumed within the mask rectangle. A fresh missing observation retires the mask; a 750 ms freshness timeout also retires it and reports degraded coverage. API readback does not prove underlying pixels remain visible to WGC: that is a required Windows experiment.
+Masks are layered windows with constant alpha 255 and no color key, preserving full opacity while satisfying the affinity readback API contract. They use `WDA_EXCLUDEFROMCAPTURE`, verified before showing, with tool-window, topmost, and no-activate styles. Clicks are consumed within the mask rectangle. A fresh missing observation retires the mask; a 750 ms freshness timeout also retires it and reports degraded coverage. API readback does not prove underlying pixels remain visible to WGC: that is a required Windows experiment.
 
 P0 labels every decoded QR **Unverified · P0**, or **Unable to decode** when reliable candidate geometry is available. It provides no policy evaluation, Open/Copy action, TI, backend, email/document scanning, hooks, drivers, or security-tool configuration changes. The fixture writer is used only for controlled synthetic tests. The supplied policy files are reserved for P1.
 
