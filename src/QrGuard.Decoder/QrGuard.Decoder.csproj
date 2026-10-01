@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><AllowUnsafeBlocks>true</AllowUnsafeBlocks></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../QrGuard.Core/QrGuard.Core.csproj" />
+    <PackageReference Include="ZXingCpp" Version="[0.5.3]" />
+  </ItemGroup>
+</Project>

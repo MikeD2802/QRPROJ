@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "ZXingCpp": {
+        "type": "Transitive",
+        "resolved": "0.5.3",
+        "contentHash": "9/OpxmBgi0d1HRFYrhQ115Szyd/oAhcsG0p21Fp877sH2S+Fjnlrw3yhyCWhjd/uNQTaMnWkPUKfpaCuWXem7g=="
+      },
+      "qrguard.core": {
+        "type": "Project"
+      },
+      "qrguard.decoder": {
+        "type": "Project",
+        "dependencies": {
+          "QrGuard.Core": "[1.0.0, )",
+          "ZXingCpp": "[0.5.3, 0.5.3]"
+        }
+      }
+    }
+  }
+}
