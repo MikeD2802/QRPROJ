@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "policy_id": "synthetic-demo-only",
+  "revision": 1,
+  "unknown_action": "warn_then_open",
+  "rules": [
+    {
+      "id": "allow-exact-benefits-url",
+      "effect": "allow",
+      "owner": "Synthetic test fixture",
+      "reason": "Exact demonstration URL; no live company endpoint.",
+      "expires_at": "2027-10-01T00:00:00Z",
+      "match": {
+        "kind": "exact_url",
+        "value": "https://benefits.corp.example/enroll"
+      }
+    },
+    {
+      "id": "allow-exact-benefits-payload",
+      "effect": "allow",
+      "owner": "Synthetic test fixture",
+      "reason": "Same URL fixture, matched by original UTF-8 payload bytes; this is not a signed issuer identity.",
+      "expires_at": "2027-10-01T00:00:00Z",
+      "match": {
+        "kind": "payload_sha256",
+        "value": "c715fd175f63ca1c1e9f590c8ba91de1801c237d691d9bc958f1adf2cd3eb163"
+      }
+    },
+    {
+      "id": "allow-specific-help-host",
+      "effect": "allow",
+      "owner": "Synthetic test fixture",
+      "reason": "Demonstrate a broader host approval on HTTPS port 443 only.",
+      "expires_at": "2027-10-01T00:00:00Z",
+      "match": {
+        "kind": "exact_host",
+        "host": "help.corp.example",
+        "scheme": "https",
+        "effective_port": 443
+      }
+    },
+    {
+      "id": "deny-help-host-test-path",
+      "effect": "deny",
+      "owner": "Synthetic test fixture",
+      "reason": "Synthetic precedence test: deny this exact URL despite the host allow rule.",
+      "expires_at": "2027-10-01T00:00:00Z",
+      "match": {
+        "kind": "exact_url",
+        "value": "https://help.corp.example/deny-test"
+      }
+    }
+  ]
+}

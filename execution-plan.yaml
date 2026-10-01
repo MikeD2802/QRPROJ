@@ -1,0 +1,183 @@
+schema_version: 1
+project: qr-guard
+document_date: 2026-10-01
+mode: architecture_only
+implementation_authorization: not_started
+
+defaults:
+  platform: windows_11_x64
+  display_contract: local_physical_display
+  initial_monitors: 1
+  first_test_resolution: [1920, 1080]
+  runtime: dotnet_10_lts
+  capture_candidate: windows_graphics_capture_monitor_interop
+  decoder_candidate: zxing_cpp_dotnet_binding_qr_read_only
+  default_unknown_action: mask_warn_then_user_open
+  background_network_mvp: disabled
+  telemetry_mvp: local_redacted_bounded
+  remote_view_protection: not_claimed
+  endpoint_runtime_llm: absent
+
+invariants:
+  - local_pixels_and_payload_processing
+  - mask_without_waiting_for_network
+  - approved_does_not_mean_guaranteed_safe
+  - no_match_does_not_mean_safe
+  - deny_before_allow
+  - no_pixels_or_secrets_in_persistent_diagnostics
+  - no_periodic_unmasking
+  - no_stale_action_or_verdict_reuse
+  - no_focus_theft_or_unrelated_input_blocking
+  - supported_apis_only
+  - bounded_resource_use_and_retry
+  - existing_security_settings_unchanged
+
+phases:
+  - id: P0
+    name: windows_feasibility
+    status: pending
+    depends_on: []
+    scope:
+      - minimal_capture_decode_opaque_mask_vertical_slice
+      - underlying_content_observation_while_mask_present
+      - synthetic_qr_motion_occlusion_and_payload_change
+      - screenshot_and_share_behavior_characterization
+    excluded:
+      - backend
+      - ti
+      - service_installation
+      - production_device_rollout
+    exit_criteria:
+      - physical_phone_cannot_decode_covered_static_fixture
+      - agent_sees_underlying_qr_without_hiding_mask
+      - mask_tracks_and_retires_on_fresh_observations
+      - no_focus_theft_or_unrelated_click_interception
+      - desktop_and_window_share_modes_are_separately_documented
+      - cpu_memory_latency_baseline_is_measured_on_windows
+    evidence:
+      - evidence/P0/environment.md
+      - evidence/P0/capture-overlay-results.md
+      - evidence/P0/physical-phone-results.md
+      - evidence/P0/compatibility-and-baseline.md
+    gates: [G01, G02, G07]
+
+  - id: P1
+    name: offline_mvp
+    status: pending
+    depends_on: [P0]
+    scope:
+      - typed_payload_validation_and_local_policy
+      - track_and_policy_revision_bound_actions
+      - mask_labels_and_accessible_user_opened_details
+      - bounded_scheduler_and_coverage_status
+      - local_redaction_and_exit_recovery
+    exit_criteria:
+      - policy_schema_and_semantic_validation_pass
+      - deny_precedence_expiry_and_strict_matching_pass
+      - no_background_egress_observed
+      - sensitive_non_url_payloads_never_launch_or_log
+      - original_validated_http_target_opens_only_after_user_action
+      - stale_payload_or_policy_actions_are_rejected_or_revalidated
+      - stationary_payload_change_and_qr_removal_regressions_pass
+      - resource_targets_met_or_deviation_is_explicitly_accepted
+    evidence:
+      - evidence/P1/contracts.md
+      - evidence/P1/windows-acceptance.md
+      - evidence/P1/egress-and-resource-report.md
+    gates: [G07]
+
+  - id: P2
+    name: endpoint_pilot_readiness
+    status: pending
+    depends_on: [P1]
+    scope:
+      - mixed_dpi_multi_monitor_lifecycle
+      - lock_unlock_display_and_device_recovery
+      - signed_package_and_clean_uninstall
+      - coexistence_and_soak_testing
+      - legitimate_qr_workflow_decisions
+    exit_criteria:
+      - mixed_dpi_negative_origin_rotation_and_monitor_removal_pass
+      - defined_coverage_envelope_and_unsupported_modes_published
+      - meetings_recording_remote_support_and_accessibility_results_recorded
+      - legitimate_enrollment_workflows_have_approved_behavior
+      - unknown_destination_policy_decided_for_pilot
+      - rollback_and_disable_path_tested
+      - pilot_device_cohort_and_build_explicitly_authorized
+    evidence:
+      - evidence/P2/compatibility-matrix.md
+      - evidence/P2/soak-and-resource-report.md
+      - evidence/P2/pilot-and-rollback.md
+    gates: [G02, G03, G04, G07]
+
+  - id: P3
+    name: enterprise_management
+    status: pending
+    depends_on: [P2]
+    scope:
+      - minimal_management_broker_and_authenticated_ipc
+      - enrollment_and_tenant_bound_identity
+      - signed_versioned_policy_and_atomic_cache
+      - bounded_health_event_ingestion_and_durable_queue
+      - administration_audit_and_deployment_rings
+    exit_criteria:
+      - deployment_identity_region_and_stale_policy_choices_recorded
+      - wrong_tenant_device_session_and_signature_rejected
+      - rollback_revision_and_offline_expiry_behavior_pass
+      - broker_outage_does_not_stop_local_policy_and_masking
+      - event_idempotence_outbox_and_backpressure_pass
+      - synthetic_50000_device_model_and_10x_bursts_measured
+      - no_sensitive_pixels_payloads_or_queries_reach_backend
+      - production_pilot_is_authorized_for_concrete_build_and_cohort
+    evidence:
+      - evidence/P3/security-and-isolation.md
+      - evidence/P3/offline-and-recovery.md
+      - evidence/P3/capacity-and-operations.md
+    gates: [G03, G04, G05, G06, G07]
+
+  - id: P4
+    name: optional_reputation
+    status: pending
+    depends_on: [P3]
+    optional: true
+    scope:
+      - one_verified_provider_adapter
+      - tenant_scoped_cache_and_inflight_deduplication
+      - nonblocking_revision_bound_verdict_updates
+      - provider_rate_limits_timeouts_and_circuit_breaker
+    excluded_by_default:
+      - redirect_fetching
+      - full_url_submission_to_third_parties
+      - secret_or_tokenized_payload_submission
+      - sandboxing
+      - automatic_soar_remediation
+    exit_criteria:
+      - provider_api_and_license_verified
+      - submission_fields_retention_and_cost_model_approved
+      - provider_outage_or_no_match_remains_unverified
+      - stale_result_for_changed_qr_is_discarded
+      - malicious_precedence_and_override_audit_are_defined
+      - local_mask_latency_is_independent_of_provider_latency
+    evidence:
+      - evidence/P4/provider-and-data-contract.md
+      - evidence/P4/fault-latency-and-cost-report.md
+    gates: [G06, G07]
+
+clarification_gates:
+  G01: Real Windows and physical phone verification required to complete feasibility.
+  G02: Capture under a persistent mask and screenshot/share scope must be resolved.
+  G03: Real enrollment or pairing codes need an approved usability path before rollout.
+  G04: Decide warn-and-open versus block-unapproved for managed deployment.
+  G05: Decide tenancy hosting identity and stale-policy lifetime before enterprise implementation.
+  G06: Approve new outbound metadata third-party submissions and retention before egress.
+  G07: Ask before a material scope resource safety-label or supported-API tradeoff.
+
+agent_rules:
+  work_only_within_authorized_scope: true
+  completed_requires_phase_specific_evidence: true
+  architecture_targets_are_not_test_results: true
+  dependent_work_pauses_on_required_decision: true
+  independent_work_can_continue: true
+  silence_is_not_a_required_decision: true
+  reask_already_answered_decisions: false
+  max_materially_different_blocked_capture_attempts: 2

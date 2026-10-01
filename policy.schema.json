@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:qr-guard:policy:1",
+  "title": "QR Guard local policy body v1",
+  "description": "MVP policy body. Enterprise adds an authenticated signed envelope. Schema validation does not replace semantic URI validation, unique IDs, or policy precedence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "revision", "unknown_action", "rules"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "policy_id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-zA-Z0-9._-]+$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "unknown_action": {"enum": ["warn_then_open", "block"]},
+    "rules": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {"$ref": "#/$defs/rule"}
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "effect", "owner", "reason", "expires_at", "match"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-zA-Z0-9._-]+$"},
+        "effect": {"enum": ["allow", "deny"]},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 128},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 512},
+        "expires_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+        "match": {
+          "oneOf": [
+            {"$ref": "#/$defs/exactUrl"},
+            {"$ref": "#/$defs/exactHost"},
+            {"$ref": "#/$defs/payloadHash"}
+          ]
+        }
+      }
+    },
+    "exactUrl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {"const": "exact_url"},
+        "value": {"type": "string", "format": "uri", "pattern": "^https?://", "minLength": 1, "maxLength": 4096}
+      }
+    },
+    "exactHost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "host", "scheme", "effective_port"],
+      "properties": {
+        "kind": {"const": "exact_host"},
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253,
+          "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"
+        },
+        "scheme": {"enum": ["http", "https"]},
+        "effective_port": {"type": "integer", "minimum": 1, "maximum": 65535}
+      }
+    },
+    "payloadHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {"const": "payload_sha256"},
+        "value": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    }
+  }
+}
